@@ -271,6 +271,10 @@ func (s stringSpan) isValidUint(supportHex bool, min, max uint64) bool {
 	return val <= max && val >= min
 }
 
+func (s stringSpan) isValidUint32() bool {
+	return s.isValidUint(false, 0, 4_294_967_295)
+}
+
 func (s stringSpan) isValidPort() bool {
 	return s.isValidUint(false, 0, 65535)
 }
@@ -383,13 +387,13 @@ func (s stringSpan) isValidHField() bool {
 		if *s.at(i) == '-' {
 			first := stringSpan{s.s, i}
 			second := stringSpan{s.at(i + 1), s.len - i - 1}
-			if first.isValidUint(false, 0, 2_147_483_647) && second.isValidUint(false, 0, 2_147_483_647) {
+			if first.isValidUint32() && second.isValidUint32() {
 				return true
 			}
 			return false
 		}
 	}
-	return s.isValidUint(false, 0, 2_147_483_647)
+	return s.isValidUint32()
 }
 
 func (s stringSpan) isValidIField() bool {
