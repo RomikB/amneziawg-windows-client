@@ -19,7 +19,7 @@ if exist .deps\prepared goto :render
 	call :download imagemagick.zip https://download.wireguard.com/windows-toolchain/distfiles/ImageMagick-7.0.8-42-portable-Q16-x64.zip 584e069f56456ce7dde40220948ff9568ac810688c892c5dfb7f6db902aa05aa "convert.exe colors.xml delegates.xml" || goto :error
 	rem Mirror of https://sourceforge.net/projects/ezwinports/files/make-4.2.1-without-guile-w32-bin.zip
 	call :download make.zip https://download.wireguard.com/windows-toolchain/distfiles/make-4.2.1-without-guile-w32-bin.zip 30641be9602712be76212b99df7209f4f8f518ba764cf564262bc9d6e4047cc7 "--strip-components 1 bin" || goto :error
-	call :download amneziawg-tools.zip https://github.com/amnezia-vpn/amneziawg-tools/archive/v1.0.20250903.zip 086e0597906fd720ed83991716e77a8794ab750b9ccff8f153c7c05073d0b40c "--exclude wg-quick --strip-components 1" || goto :error
+	call :download amneziawg-tools.zip https://github.com/amnezia-vpn/amneziawg-tools/archive/v3.0.20260805.zip c835f3c42d40ba3b606b19d6d235af9b4d2b68543766dd1175b95809125ecaee "--exclude wg-quick --strip-components 1" || goto :error
 	call :download wintun.zip https://www.wintun.net/builds/wintun-0.14.1.zip 07c256185d6ee3652e09fa55c0b673e2624b565e02c4b9091c79ca7d2f24ef51 || goto :error
 	copy /y NUL prepared > NUL || goto :error
 	cd .. || goto :error
@@ -29,6 +29,7 @@ if exist .deps\prepared goto :render
 	for %%a in ("ui\icon\*.svg") do convert -background none "%%~fa" -define icon:auto-resize="256,192,128,96,64,48,40,32,24,20,16" -compress zip "%%~dpna.ico" || goto :error
 
 :build
+	git apply windows7-update.patch
 	for /f "tokens=3" %%a in ('findstr /r "Number.*=.*[0-9.]*" .\version\version.go') do set WIREGUARD_VERSION=%%a
 	set WIREGUARD_VERSION=%WIREGUARD_VERSION:"=%
 	for /f "tokens=1-4" %%a in ("%WIREGUARD_VERSION:.= % 0 0 0") do set WIREGUARD_VERSION_ARRAY=%%a,%%b,%%c,%%d
